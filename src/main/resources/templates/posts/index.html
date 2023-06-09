@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Index</title>
@@ -9,7 +9,7 @@
 <nav th:replace="partials/navbar :: navbar"></nav>
 
 <h1 th:replace="partials/header :: header"></h1>
-<th:block th:each="post: ${posts}">
+<th:block th:each="post: ${postList}">
     <li th:text="${post.title}"></li>
     <li th:text="${post.body}"></li>
 </th:block>

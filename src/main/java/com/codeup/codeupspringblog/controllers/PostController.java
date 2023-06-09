@@ -1,48 +1,83 @@
-
 package com.codeup.codeupspringblog.controllers;
 
 import com.codeup.codeupspringblog.models.Post;
+import com.codeup.codeupspringblog.models.User;
+import com.codeup.codeupspringblog.Repository.PostCategoriesRepository;
+import com.codeup.codeupspringblog.Repository.PostRepository;
+import com.codeup.codeupspringblog.Repository.UserRepository;
+import com.codeup.codeupspringblog.services.EmailService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 public class PostController {
+    private final PostRepository postsDao;
+    private final UserRepository userDao;
+    private final PostCategoriesRepository catDao;
+    private final EmailService emailService;
+
+    public PostController(PostRepository postsDao, UserRepository userDao, PostCategoriesRepository catDao, EmailService emailService) {
+        this.postsDao = postsDao;
+        this.userDao = userDao;
+        this.catDao = catDao;
+        this.emailService = emailService;
+    }
 
     @GetMapping("/posts")
 
     public String viewPosts(Model model) {
-        List<Post> posts= new ArrayList<>();
-        posts.add(new Post("first post", "this is my first post"));
-        posts.add(new Post("second post", "this is my second post"));
-
-        model.addAttribute("posts",posts);
+        model.addAttribute("posts", postsDao.findAll());
         return "posts/index";
     }
 
 
     @GetMapping("/posts/{id}")
     public String singlePost(@PathVariable long id, Model model) {
-        Post post1= new Post("title", "description");
-        model.addAttribute("post", post1);
+        model.addAttribute("post", postsDao.findById(id).get());
         return "posts/show";
     }
 
 
     @GetMapping("/posts/create")
-    @ResponseBody
-    public String showPostForm() {
-        return "Viewing form to create a new post!";
+    public String showPostForm(Model model) {
+        // show categories in form
+        model.addAttribute("categories", catDao.findAll());
+        // pass a new Post object to the form
+        model.addAttribute("post", new Post());
+        return "/posts/create";
     }
 
 
     @PostMapping("/posts/create")
 //    @RequestMapping(path = "/posts/create", method = RequestMethod.POST)
-    @ResponseBody
-    public String submitNewPost() {
-        return "submitting new post";
+    public String submitNewPost(@ModelAttribute Post post) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        post.setUser(user);
+
+        emailService.prepareAndSend(post, "New Post Created!", post.getBody());
+        postsDao.save(post);
+        return "redirect:/posts";
     }
+
+    @GetMapping("/posts/{id}/edit")
+    public String showEditForm(@PathVariable long id, Model model) {
+        if(postsDao.findById(id).isPresent()) {
+            Post postToEdit = postsDao.findById(id).get();
+            model.addAttribute("post", postToEdit);
+        }
+        return "posts/edit";
+    }
+
+    @PostMapping("/posts/{id}/edit")
+    public String updatePost(@ModelAttribute Post newPost) {
+        User user = userDao.findById(1L).get();
+        newPost.setUser(user);
+        postsDao.save(newPost);
+        return "redirect:/posts";
+    }
+
+
+
 }
