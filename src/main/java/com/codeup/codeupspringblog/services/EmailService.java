@@ -1,6 +1,5 @@
 package com.codeup.codeupspringblog.services;
 
-
 import com.codeup.codeupspringblog.models.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +20,7 @@ public class EmailService {
     public void prepareAndSend(Post post, String subject, String body) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(from);
-        msg.setTo("nps@nps.com");
+        msg.setTo(post.getUser().getEmail());
         msg.setSubject(subject);
         msg.setText(body);
 

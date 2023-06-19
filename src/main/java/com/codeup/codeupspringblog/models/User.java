@@ -18,14 +18,23 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @Column(nullable = false, columnDefinition = "VarChar(50)")
-    public long username;
-    @Column(columnDefinition = "VarChar(50)")
-    public long email;
-    @Column(nullable = false, columnDefinition = "VarChar(50)")
-    long password;
+    private Long id;
+    @Column(nullable = false, columnDefinition = "VARCHAR(100)")
+    private String username;
+    @Column(nullable = false, columnDefinition = "VARCHAR(100)")
+    private String email;
+    @Column(nullable = false)
+    private String password;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    public List<Post> posts;
+    List<Post> posts;
+
+    // This is known as a copy constructor, which will make a clone of the user object
+    public User(User copy) {
+        this.id = copy.id;
+        this.email = copy.email;
+        this.username = copy.username;
+        this.password = copy.password;
+    }
 }
 

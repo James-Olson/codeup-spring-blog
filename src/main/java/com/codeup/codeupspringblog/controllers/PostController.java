@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Security;
+
 @Controller
 public class PostController {
     private final PostRepository postsDao;
@@ -72,12 +74,22 @@ public class PostController {
 
     @PostMapping("/posts/{id}/edit")
     public String updatePost(@ModelAttribute Post newPost) {
-        User user = userDao.findById(1L).get();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         newPost.setUser(user);
         postsDao.save(newPost);
         return "redirect:/posts";
     }
 
+    @PostMapping("/posts/{id}/delete")
+    public String deletePost (@PathVariable long id){
+        User loggedInUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Post postToDelete = postsDao.findById(id).get();
 
+        if(loggedInUser.getId() == postToDelete.getUser().getId()) {
+            postsDao.deleteById(id);
+
+        }
+        return "redirect:/posts";
+    }
 
 }

@@ -1,14 +1,55 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-<p>User Selection <span th:text="${guess}"></span></p>
-<p>Random Number <span th:text="${randomNum}"></span> </p>
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">SpringBlog</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/posts">Posts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/posts/create">Create Post</a>
+                </li>
+            </ul>
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            <form class="d-flex" th:action="@{/logout}" th:method="post">
+                <button class="btn btn-secondary">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+<div th:fragment="card"  class="card" style="width: 18rem;">
+    <img src="..." class="card-img-top" alt="...">
+    <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+    </div>
+</div>
 
-<p th:if="${guess == randomNum}">You win</p>
-<p th:if="${guess != randomNum}">You lose</p>
+<th:block th:fragment="form">
+    <label for="title">Title: </label>
+    <input type="text" name="title" id="title" th:field="*{title}">
+    <label for="body">Body: </label>
+    <textarea name="body" id="body" th:field="*{body}"></textarea>
+    <th:block th:each="category : ${postToEdit.categories}">
+        <label th:text="${category.name}"></label>
+        <input type="checkbox" name="category" th:field="*{categories}" th:value="${category.id}">
+    </th:block>
+    <button>Update</button>
+</th:block>
+
 </body>
 </html>

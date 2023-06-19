@@ -1,8 +1,7 @@
 package com.codeup.codeupspringblog.controllers;
 
-import com.codeup.codeupspringblog.Repository.UserRepository;
 import com.codeup.codeupspringblog.models.User;
-
+import com.codeup.codeupspringblog.Repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
