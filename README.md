@@ -1,5 +1,5 @@
 ## codeup-spring-blog
 
 ```bash
-asldkjf
+A Java project still in the making, try it out and see how it is progressing
 ```
